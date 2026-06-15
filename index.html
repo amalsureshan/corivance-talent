@@ -20,16 +20,25 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
+  // ===================================================================
+  //  BRAND PALETTE — Corivance (applied). Single source of truth.
+  //  white #FFFFFF · warm black #161614 · gold #FFC536 ·
+  //  ochre #8E5915 · tan #D2AF85. Edit here to recolour the whole app.
+  //  Roles: text=ink, primary=brand(ochre), CTA/highlight=accent(gold),
+  //  background=paper, surface=card. The logo/icon mark is embedded
+  //  below as ICON_URI (see BrandMark / BrandLogo).
+  // ===================================================================
   tailwind.config = {
     theme: {
       extend: {
         colors: {
-          ink:   '#1B1D24',
-          muted: '#6B7280',
-          line:  '#E6E7EB',
-          paper: '#F4F5F7',
-          card:  '#FFFFFF',
-          brand: { DEFAULT: '#4F46E5', soft: '#EEF0FE' },
+          ink:   '#161614',   // text (warm black)
+          muted: '#79716B',   // secondary text (warm gray)
+          line:  '#E8E2D7',   // borders / dividers (warm)
+          paper: '#F7F4EE',   // background (warm off-white)
+          card:  '#FFFFFF',   // surface
+          brand: { DEFAULT: '#8E5915', soft: '#F4E7D2' },  // primary: ochre + tint
+          accent:{ DEFAULT: '#FFC536', ink: '#7A4E12' },   // gold (CTAs / highlights)
         },
         fontFamily: {
           sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
@@ -44,7 +53,7 @@
     .inp  { @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/60 focus:border-brand focus:ring-2 focus:ring-brand/20; }
     .lbl  { @apply block text-[11px] font-semibold uppercase tracking-wide text-muted mb-1; }
     .btn  { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition select-none disabled:opacity-50 disabled:cursor-not-allowed; }
-    .btn-primary { @apply btn bg-brand text-white hover:bg-brand/90 active:scale-[.98]; }
+    .btn-primary { @apply btn bg-accent text-ink hover:brightness-95 active:scale-[.98]; }
     .btn-ghost   { @apply btn border border-line bg-white text-ink hover:bg-paper; }
     .btn-soft    { @apply btn bg-brand-soft text-brand hover:brightness-95; }
     .btn-danger  { @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50; }
@@ -53,11 +62,11 @@
     .seg   { @apply rounded-md px-3 py-1.5 text-sm font-medium transition; }
   }
   html, body, #root { height: 100%; }
-  body { background: #F4F5F7; }
+  body { background: #F7F4EE; }
   ::-webkit-scrollbar { height: 10px; width: 10px; }
-  ::-webkit-scrollbar-thumb { background: #d4d6dc; border-radius: 99px; border: 2px solid #F4F5F7; }
-  ::-webkit-scrollbar-thumb:hover { background: #bcbfc7; }
-  [data-dragover="true"] { outline: 2px dashed #4F46E5; outline-offset: -4px; background: #EEF0FE80; }
+  ::-webkit-scrollbar-thumb { background: #D8CFC0; border-radius: 99px; border: 2px solid #F7F4EE; }
+  ::-webkit-scrollbar-thumb:hover { background: #C4B8A4; }
+  [data-dragover="true"] { outline: 2px dashed #8E5915; outline-offset: -4px; background: #F4E7D2cc; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
 
@@ -72,6 +81,7 @@
 
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useMemo, useRef, useCallback } = React;
+const ICON_URI = "data:image/png;base64,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";
 
 /* ============================ Constants ============================ */
 const SUPABASE_URL = window.SUPABASE_URL || "";
@@ -83,14 +93,14 @@ const STAGES = ["New","Reviewing","Test Offered","Test Submitted","Evaluated","H
 const ACTIVE_STAGES = STAGES.slice(0, 6);      // pipeline flow
 const TERMINAL_STAGES = ["Rejected","Archived"];
 const STAGE_COLOR = {
-  "New":            "#6366F1",
+  "New":            "#234A6B",
   "Reviewing":      "#0EA5E9",
   "Test Offered":   "#F59E0B",
   "Test Submitted": "#8B5CF6",
   "Evaluated":      "#14B8A6",
   "Hired":          "#16A34A",
   "Rejected":       "#DC2626",
-  "Archived":       "#6B7280",
+  "Archived":       "#8A8178",
 };
 const COLLAB = ["Long-term","Project-based","Both"];
 const PAY_TYPES = ["Project-based","Single payment after completion"];
@@ -105,6 +115,12 @@ const fmtWhen = (d) => d ? new Date(d).toLocaleString(undefined,{month:"short",d
 const arr = (v) => Array.isArray(v) ? v : [];
 const splitList = (s) => String(s||"").split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
 const tri = (v) => v === true ? "Yes" : v === false ? "No" : "—";
+const checklistProgress = (f, items) => {
+  const total = items.length;
+  const ck = f.checklist || {};
+  const done = items.reduce((n,i)=> n + (ck[i.id] ? 1 : 0), 0);
+  return { done, total };
+};
 
 function hexA(hex, a){ // hex + alpha -> rgba
   const n = parseInt(hex.slice(1),16);
@@ -143,6 +159,43 @@ function Toggle({ on, onClick, children }){
       className={cx("chip border transition", on ? "border-brand bg-brand-soft text-brand" : "border-line bg-white text-muted hover:border-muted/40")}>
       {on && <span>✓</span>}{children}
     </button>
+  );
+}
+
+/* --- Brand ---
+   BrandMark is the Corivance icon mark placed before every page/section
+   header. It's a placeholder until the brand icon arrives — to use the real
+   icon, swap the inner <span> for: <img src="corivance-icon.svg" .../>.
+   Keep the wrapper's size/alignment so spacing stays consistent everywhere. */
+function BrandMark({ size = 20 }){
+  return <img src={ICON_URI} alt="" aria-hidden="true" draggable="false"
+    className="shrink-0 select-none" style={{ width:size, height:size, objectFit:"contain" }} />;
+}
+function BrandLogo(){
+  return (
+    <div className="flex items-center gap-2">
+      <BrandMark size={26} />
+      <span className="text-base font-bold tracking-tight text-ink">Corivance</span>
+    </div>
+  );
+}
+function PageHeader({ title, actions }){
+  return (
+    <div className="mb-4 flex items-center justify-between gap-3">
+      <h1 className="flex items-center gap-2 text-lg font-bold text-ink"><BrandMark size={22} />{title}</h1>
+      {actions && <div className="flex items-center gap-2">{actions}</div>}
+    </div>
+  );
+}
+function ChecklistPill({ f, items }){
+  if(!items.length) return null;
+  const { done, total } = checklistProgress(f, items);
+  const complete = done === total;
+  return (
+    <span className={cx("chip font-mono", complete ? "bg-green-50 text-green-700" : "bg-paper text-muted")}
+      title={`${done} of ${total} checklist items done`}>
+      <span>{complete ? "✓" : "☑"}</span>{done}/{total}
+    </span>
   );
 }
 
@@ -540,9 +593,9 @@ function FreelancerCard({ f, db, onOpen, draggable }){
       {arr(f.work_areas).length>0 && (
         <div className="mt-2 flex flex-wrap gap-1">{arr(f.work_areas).slice(0,3).map(w=><Tag key={w}>{w}</Tag>)}</div>
       )}
-      <div className="mt-2 flex items-center justify-between">
+      <div className="mt-2 flex items-center justify-between gap-2">
         <StageChip stage={f.stage} />
-        {f.collaboration_type && <span className="text-[11px] text-muted">{f.collaboration_type}</span>}
+        <ChecklistPill f={f} items={db.checklistItems} />
       </div>
     </div>
   );
@@ -582,8 +635,8 @@ function Board({ items, db, onOpen }){
 }
 
 /* ============================ Pipeline view ============================ */
-function Pipeline({ db, onOpen }){
-  const [view,setView] = useState("board");
+function Pipeline({ db, onOpen, presetStage, clearPreset }){
+  const [view,setView] = useState("list");
   const [q,setQ] = useState("");
   const [fWA,setFWA] = useState("");
   const [fSub,setFSub] = useState("");
@@ -591,6 +644,9 @@ function Pipeline({ db, onOpen }){
   const [fCollab,setFCollab] = useState("");
   const [fRating,setFRating] = useState("");
   const [fCheck,setFCheck] = useState(""); // checklist item id "incomplete"
+
+  // Open filtered to a stage when arriving from a dashboard tile.
+  useEffect(()=>{ if(presetStage){ setFStage(presetStage); clearPreset && clearPreset(); } }, [presetStage]);
 
   const items = useMemo(()=>{
     const ql = q.trim().toLowerCase();
@@ -614,6 +670,7 @@ function Pipeline({ db, onOpen }){
 
   return (
     <div>
+      <PageHeader title="Talent Pipeline" />
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="inline-flex rounded-lg bg-paper p-1 ring-1 ring-line">
           <button className={cx("seg", view==="board"?"bg-white shadow-sm text-ink":"text-muted")} onClick={()=>setView("board")}>Board</button>
@@ -662,6 +719,7 @@ function ListTable({ items, db, onOpen }){
               <th className="px-3 py-2 font-semibold">Name</th>
               <th className="px-3 py-2 font-semibold">Work areas</th>
               <th className="px-3 py-2 font-semibold">Stage</th>
+              <th className="px-3 py-2 font-semibold">Checklist</th>
               <th className="px-3 py-2 font-semibold">Collab</th>
               <th className="px-3 py-2 font-semibold">Rating</th>
               <th className="px-3 py-2 font-semibold">Rate</th>
@@ -676,6 +734,7 @@ function ListTable({ items, db, onOpen }){
                 </td>
                 <td className="px-3 py-2"><div className="flex flex-wrap gap-1">{arr(f.work_areas).map(w=><Tag key={w}>{w}</Tag>)}</div></td>
                 <td className="px-3 py-2"><StageChip stage={f.stage} /></td>
+                <td className="px-3 py-2"><ChecklistPill f={f} items={db.checklistItems} /></td>
                 <td className="px-3 py-2 text-muted">{f.collaboration_type||"—"}</td>
                 <td className="px-3 py-2"><Stars value={f.rating} /></td>
                 <td className="px-3 py-2 font-mono text-xs text-muted">{f.quoted_rate?`${f.quoted_rate} ${f.currency||""}`:"—"}</td>
@@ -694,10 +753,7 @@ function Projects({ db }){
   const [creating,setCreating] = useState(false);
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-bold text-ink">Projects & roster</h2>
-        <button className="btn-primary" onClick={()=>setCreating(true)}>+ New project</button>
-      </div>
+      <PageHeader title="Projects" actions={<button className="btn-primary" onClick={()=>setCreating(true)}>+ New project</button>} />
       {db.projects.length===0
         ? <Empty>No projects yet. Hire a freelancer or create a project to start.</Empty>
         : <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -812,26 +868,160 @@ function ProjectDetail({ project, db, onClose }){
   );
 }
 
+/* ============================ Freelancers directory (read-only) ============================ */
+const PROSPECT_STAGES = ["New","Reviewing","Test Offered","Test Submitted","Evaluated"];
+const DIR_FILTERS = [["all","All"],["prospects","Prospects"],["hired","Hired"],["archived","Archived"],["rejected","Rejected"]];
+const dirMatch = (f, key) => {
+  if(key==="all") return true;
+  if(key==="prospects") return PROSPECT_STAGES.includes(f.stage);
+  if(key==="hired") return f.stage==="Hired";
+  if(key==="archived") return f.stage==="Archived";
+  if(key==="rejected") return f.stage==="Rejected";
+  return true;
+};
+function Freelancers({ db }){
+  const [filter,setFilter] = useState("all");
+  const [q,setQ] = useState("");
+  const [open,setOpen] = useState(null);
+  const items = db.freelancers.filter(f=>{
+    if(!dirMatch(f, filter)) return false;
+    if(q.trim()){
+      const hay=[f.full_name,f.email,arr(f.work_areas).join(" "),arr(f.tags).join(" ")].join(" ").toLowerCase();
+      if(!hay.includes(q.trim().toLowerCase())) return false;
+    }
+    return true;
+  });
+  return (
+    <div>
+      <PageHeader title="Freelancers" />
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="inline-flex flex-wrap rounded-lg bg-paper p-1 ring-1 ring-line">
+          {DIR_FILTERS.map(([k,l])=>(
+            <button key={k} onClick={()=>setFilter(k)} className={cx("seg", filter===k?"bg-white shadow-sm text-ink":"text-muted")}>
+              {l} <span className="font-mono text-[11px] text-muted">{db.freelancers.filter(f=>dirMatch(f,k)).length}</span>
+            </button>
+          ))}
+        </div>
+        <input className="inp max-w-xs" placeholder="Search name, email, work area…" value={q} onChange={e=>setQ(e.target.value)} />
+        <span className="ml-auto font-mono text-xs text-muted">{items.length}</span>
+      </div>
+      {items.length===0 ? <Empty>No freelancers here yet.</Empty> :
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(f=>(
+            <button key={f.id} onClick={()=>setOpen(f)} className="card p-4 text-left transition hover:border-brand/40 hover:shadow-sm">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="truncate font-semibold text-ink">{f.full_name}</p>
+                  {f.email && <p className="truncate text-xs text-muted">{f.email}</p>}
+                </div>
+                <Stars value={f.rating} />
+              </div>
+              {arr(f.work_areas).length>0 && <div className="mt-2 flex flex-wrap gap-1">{arr(f.work_areas).slice(0,3).map(w=><Tag key={w}>{w}</Tag>)}</div>}
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <StageChip stage={f.stage} />
+                <ChecklistPill f={f} items={db.checklistItems} />
+              </div>
+            </button>
+          ))}
+        </div>}
+      {open && <ReadOnlyProfile f={open} db={db} onClose={()=>setOpen(null)} />}
+    </div>
+  );
+}
+function ReadOnlyRow({ label, value }){
+  return (
+    <div className="flex justify-between gap-3 border-b border-line/70 py-1.5 last:border-0">
+      <span className="shrink-0 text-xs text-muted">{label}</span>
+      <span className="text-right text-sm text-ink">{(value || value===0) ? value : "—"}</span>
+    </div>
+  );
+}
+function ReadOnlyProfile({ f, db, onClose }){
+  const comments = db.comments.filter(c=>c.freelancer_id===f.id); // same shared thread as the pipeline record
+  return (
+    <Modal open onClose={onClose} wide title={f.full_name} subtitle={f.email||""}
+      footer={<button className="btn-ghost" onClick={onClose}>Close</button>}>
+      <div className="mb-4 flex items-center gap-2">
+        <StageChip stage={f.stage} />
+        <ChecklistPill f={f} items={db.checklistItems} />
+        <span className="ml-auto text-[11px] text-muted">Read-only · edit in the Pipeline</span>
+      </div>
+
+      <Section title="Profile">
+        <ReadOnlyRow label="Phone / WhatsApp" value={f.phone} />
+        <ReadOnlyRow label="Portfolio" value={f.portfolio_link ? <a className="text-brand underline" href={f.portfolio_link} target="_blank" rel="noreferrer">{f.portfolio_link}</a> : null} />
+        <ReadOnlyRow label="Work areas" value={arr(f.work_areas).join(", ")} />
+        <ReadOnlyRow label="Sub-specialties" value={arr(f.sub_specialties).join(", ")} />
+        <ReadOnlyRow label="Hours / week" value={f.hours_per_week} />
+        <ReadOnlyRow label="Collaboration" value={f.collaboration_type} />
+        <ReadOnlyRow label="Turnaround" value={f.turnaround_time} />
+        <ReadOnlyRow label="Design tools" value={f.design_tools} />
+        <ReadOnlyRow label="OK with feedback" value={tri(f.ok_with_feedback)} />
+        <ReadOnlyRow label="Can share source" value={tri(f.can_share_source)} />
+        <ReadOnlyRow label="Willing design test" value={f.willing_design_test} />
+        <ReadOnlyRow label="Source" value={f.source} />
+        <ReadOnlyRow label="Tags" value={arr(f.tags).join(", ")} />
+      </Section>
+
+      {(f.past_project_types || f.best_portfolio_projects || f.intake_notes) && (
+        <Section title="Notes">
+          {f.past_project_types && <div className="mb-3"><p className="lbl">Past project types</p><p className="whitespace-pre-wrap text-sm text-ink">{f.past_project_types}</p></div>}
+          {f.best_portfolio_projects && <div className="mb-3"><p className="lbl">Best portfolio projects</p><p className="whitespace-pre-wrap text-sm text-ink">{f.best_portfolio_projects}</p></div>}
+          {f.intake_notes && <div><p className="lbl">Anything else</p><p className="whitespace-pre-wrap text-sm text-ink">{f.intake_notes}</p></div>}
+        </Section>
+      )}
+
+      <Section title="Vetting checklist">
+        {db.checklistItems.length===0 ? <p className="text-sm text-muted">No checklist items.</p> :
+          <div className="space-y-1.5">
+            {db.checklistItems.map(item=>{
+              const on=!!(f.checklist||{})[item.id];
+              return (
+                <div key={item.id} className={cx("flex items-center gap-2 rounded-lg border px-3 py-2 text-sm", on?"border-green-200 bg-green-50 text-ink":"border-line bg-white text-muted")}>
+                  <span className={cx("flex h-4 w-4 items-center justify-center rounded border text-[10px]", on?"border-green-500 bg-green-500 text-white":"border-line")}>{on?"✓":""}</span>
+                  {item.label}
+                </div>
+              );
+            })}
+          </div>}
+      </Section>
+
+      <Section title="Pricing & payment">
+        <ReadOnlyRow label="Quoted rate" value={f.quoted_rate!=null ? `${f.quoted_rate} ${f.currency||""}` : null} />
+        <ReadOnlyRow label="Pay type" value={f.pay_type} />
+        <ReadOnlyRow label="Payment notes" value={f.payment_notes} />
+      </Section>
+
+      <Section title="Comments / feedback">
+        <CommentThread items={comments}
+          onAdd={(body)=>db.addComment({ freelancer_id:f.id, body })}
+          onDelete={(id)=>db.deleteComment(id)} />
+      </Section>
+    </Modal>
+  );
+}
+
 /* ============================ Dashboard ============================ */
-function Dashboard({ db, go }){
+function Dashboard({ db, go, onStageClick }){
   const counts = STAGES.reduce((m,s)=>{ m[s]=db.freelancers.filter(f=>f.stage===s).length; return m; },{});
   const owesTest = db.freelancers.filter(f=>f.stage==="Test Offered");
   const awaitingReview = db.freelancers.filter(f=>f.stage==="Test Submitted");
   const activeProjects = db.projects.filter(p=>p.status==="Active");
-  const max = Math.max(1, ...STAGES.map(s=>counts[s]));
   return (
     <div className="space-y-5">
-      <div className="card p-5">
-        <h2 className="mb-4 text-sm font-bold text-ink">Pipeline by stage</h2>
-        <div className="space-y-2">
+      <PageHeader title="Dashboard" />
+      <div>
+        <h2 className="mb-3 text-sm font-bold text-ink">Pipeline by stage</h2>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {STAGES.map(s=>(
-            <div key={s} className="flex items-center gap-3">
-              <span className="w-28 shrink-0 text-xs text-muted">{s}</span>
-              <div className="h-5 flex-1 rounded bg-paper">
-                <div className="h-5 rounded" style={{width:`${(counts[s]/max)*100}%`, background:STAGE_COLOR[s], minWidth: counts[s]?"8px":"0"}} />
+            <button key={s} onClick={()=>onStageClick(s)}
+              className="card p-4 text-left transition hover:border-brand/40 hover:shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="h-2.5 w-2.5 rounded-full" style={{background:STAGE_COLOR[s]}} />
+                <span className="font-mono text-2xl font-semibold text-ink">{counts[s]}</span>
               </div>
-              <span className="w-8 text-right font-mono text-sm text-ink">{counts[s]}</span>
-            </div>
+              <div className="mt-2 text-sm font-medium text-ink">{s}</div>
+            </button>
           ))}
         </div>
       </div>
@@ -973,7 +1163,9 @@ function Settings({ db }){
   const [subName,setSubName] = useState("");
   const [ci,setCi] = useState("");
   return (
-    <div className="grid gap-5 lg:grid-cols-3">
+    <div>
+      <PageHeader title="Settings" />
+      <div className="grid gap-5 lg:grid-cols-3">
       <div className="card p-4">
         <h3 className="mb-3 text-sm font-bold text-ink">Work areas</h3>
         <div className="mb-3 flex flex-wrap gap-1.5">
@@ -1029,6 +1221,7 @@ function Settings({ db }){
           <button className="btn-soft shrink-0" disabled={!ci.trim()} onClick={()=>{db.addChecklistItem(ci.trim());setCi("");}}>Add</button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
@@ -1127,8 +1320,11 @@ function Shell({ session, db }){
   const [newF,setNewF] = useState(false);
   const [importing,setImporting] = useState(false);
   const [menu,setMenu] = useState(false);
+  const [stagePreset,setStagePreset] = useState("");
 
-  const tabs = [["dashboard","Dashboard"],["pipeline","Pipeline"],["projects","Projects"],["settings","Settings"]];
+  const tabs = [["dashboard","Dashboard"],["pipeline","Pipeline"],["freelancers","Freelancers"],["projects","Projects"],["settings","Settings"]];
+
+  const openStage = (s)=>{ setStagePreset(s); setTab("pipeline"); };
 
   if(!db.ready){
     return <div className="flex h-full items-center justify-center text-sm text-muted">Loading…</div>;
@@ -1138,13 +1334,10 @@ function Shell({ session, db }){
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
-          <div className="flex items-baseline gap-2">
-            <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand">Corivance</span>
-            <span className="text-sm font-bold text-ink">Talent</span>
-          </div>
+          <BrandLogo />
           <nav className="ml-2 hidden items-center gap-1 sm:flex">
             {tabs.map(([k,l])=>(
-              <button key={k} onClick={()=>setTab(k)} className={cx("seg", tab===k?"bg-paper text-ink":"text-muted hover:text-ink")}>{l}</button>
+              <button key={k} onClick={()=>setTab(k)} className={cx("seg", tab===k?"bg-brand-soft text-brand":"text-muted hover:text-ink")}>{l}</button>
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-2">
@@ -1168,7 +1361,7 @@ function Shell({ session, db }){
         </div>
         <nav className="flex gap-1 overflow-x-auto px-4 pb-2 sm:hidden">
           {tabs.map(([k,l])=>(
-            <button key={k} onClick={()=>setTab(k)} className={cx("seg shrink-0", tab===k?"bg-paper text-ink":"text-muted")}>{l}</button>
+            <button key={k} onClick={()=>setTab(k)} className={cx("seg shrink-0", tab===k?"bg-brand-soft text-brand":"text-muted")}>{l}</button>
           ))}
         </nav>
       </header>
@@ -1176,8 +1369,9 @@ function Shell({ session, db }){
       {db.error && <div className="mx-auto max-w-7xl px-4 pt-3"><div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{db.error}</div></div>}
 
       <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
-        {tab==="dashboard" && <Dashboard db={db} go={setTab} />}
-        {tab==="pipeline" && <Pipeline db={db} onOpen={setOpenF} />}
+        {tab==="dashboard" && <Dashboard db={db} go={setTab} onStageClick={openStage} />}
+        {tab==="pipeline" && <Pipeline db={db} onOpen={setOpenF} presetStage={stagePreset} clearPreset={()=>setStagePreset("")} />}
+        {tab==="freelancers" && <Freelancers db={db} />}
         {tab==="projects" && <Projects db={db} />}
         {tab==="settings" && <Settings db={db} />}
       </main>
@@ -1209,6 +1403,7 @@ function SignedIn({ session }){
   return <Shell session={session} db={db} />;
 }
 
+try { const _l=document.createElement("link"); _l.rel="icon"; _l.href=ICON_URI; document.head.appendChild(_l); } catch(e){}
 ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
