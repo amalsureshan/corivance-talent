@@ -26,7 +26,7 @@
   //  ochre #8E5915 · tan #D2AF85. Edit here to recolour the whole app.
   //  Roles: text=ink, primary=brand(ochre), CTA/highlight=accent(gold),
   //  background=paper, surface=card. The logo/icon mark is embedded
-  //  below as ICON_URI (see BrandMark / BrandLogo).
+  //  below as ICON_URI (see BrandMark).
   // ===================================================================
   tailwind.config = {
     theme: {
@@ -50,22 +50,25 @@
 </script>
 <style type="text/tailwindcss">
   @layer components {
-    .inp  { @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/60 focus:border-brand focus:ring-2 focus:ring-brand/20; }
+    .inp  { @apply w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none transition placeholder:text-muted/60 focus:border-brand focus:ring-2 focus:ring-brand/15; }
     .lbl  { @apply block text-[11px] font-semibold uppercase tracking-wide text-muted mb-1; }
-    .btn  { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition select-none disabled:opacity-50 disabled:cursor-not-allowed; }
-    .btn-primary { @apply btn bg-accent text-ink hover:brightness-95 active:scale-[.98]; }
+    .btn  { @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold transition select-none disabled:opacity-50 disabled:cursor-not-allowed; }
+    .btn-primary { @apply btn bg-ink text-white hover:bg-ink/90 active:scale-[.98]; }
+    .btn-accent  { @apply btn bg-accent text-ink hover:brightness-95 active:scale-[.98]; }
     .btn-ghost   { @apply btn border border-line bg-white text-ink hover:bg-paper; }
     .btn-soft    { @apply btn bg-brand-soft text-brand hover:brightness-95; }
     .btn-danger  { @apply btn border border-red-200 bg-white text-red-600 hover:bg-red-50; }
-    .card  { @apply rounded-xl border border-line bg-card; }
+    .card  { @apply rounded-xl border border-line/70 bg-card shadow-[0_1px_2px_rgba(22,22,20,0.04),0_1px_3px_rgba(22,22,20,0.05)]; }
     .chip  { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium; }
     .seg   { @apply rounded-md px-3 py-1.5 text-sm font-medium transition; }
+    .navlink { @apply flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm font-medium transition; }
   }
   html, body, #root { height: 100%; }
   body { background: #F7F4EE; }
   ::-webkit-scrollbar { height: 10px; width: 10px; }
   ::-webkit-scrollbar-thumb { background: #D8CFC0; border-radius: 99px; border: 2px solid #F7F4EE; }
   ::-webkit-scrollbar-thumb:hover { background: #C4B8A4; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   [data-dragover="true"] { outline: 2px dashed #8E5915; outline-offset: -4px; background: #F4E7D2cc; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -171,18 +174,13 @@ function BrandMark({ size = 20 }){
   return <img src={ICON_URI} alt="" aria-hidden="true" draggable="false"
     className="shrink-0 select-none" style={{ width:size, height:size, objectFit:"contain" }} />;
 }
-function BrandLogo(){
+function PageHeader({ title, subtitle, actions }){
   return (
-    <div className="flex items-center gap-2">
-      <BrandMark size={26} />
-      <span className="text-base font-bold tracking-tight text-ink">Talent</span>
-    </div>
-  );
-}
-function PageHeader({ title, actions }){
-  return (
-    <div className="mb-4 flex items-center justify-between gap-3">
-      <h1 className="text-lg font-bold text-ink">{title}</h1>
+    <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">{title}</h1>
+        {subtitle && <p className="mt-1 text-sm text-muted">{subtitle}</p>}
+      </div>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
@@ -269,23 +267,30 @@ function Login(){
     setBusy(false);
   };
   return (
-    <div className="flex min-h-full items-center justify-center p-6">
-      <div className="card w-full max-w-sm p-7 shadow-sm">
-        <div className="mb-6">
-          <div className="font-mono text-xs uppercase tracking-[0.2em] text-brand">Corivance</div>
-          <h1 className="mt-1 text-2xl font-bold text-ink">Talent</h1>
-          <p className="mt-1 text-sm text-muted">Sign in to manage the freelancer pipeline.</p>
+    <div className="flex min-h-full items-center justify-center bg-paper p-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex items-center gap-2.5">
+          <BrandMark size={30} />
+          <div className="leading-tight">
+            <div className="text-lg font-bold tracking-tight text-ink">Corivance</div>
+            <div className="text-xs font-medium uppercase tracking-[0.18em] text-muted">Talent</div>
+          </div>
         </div>
-        <div className="space-y-3">
-          <Field label="Email"><input className="inp" type="email" value={email} autoComplete="username"
-            onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} /></Field>
-          <Field label="Password"><input className="inp" type="password" value={pw} autoComplete="current-password"
-            onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} /></Field>
-          {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{err}</p>}
-          <button className="btn-primary w-full" onClick={submit} disabled={busy || !email || !pw}>
-            {busy ? "Signing in…" : "Sign in"}
-          </button>
+        <div className="card p-7">
+          <h1 className="text-xl font-bold text-ink">Sign in</h1>
+          <p className="mt-1 text-sm text-muted">Access the freelancer pipeline.</p>
+          <div className="mt-5 space-y-3">
+            <Field label="Email"><input className="inp" type="email" value={email} autoComplete="username"
+              onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} /></Field>
+            <Field label="Password"><input className="inp" type="password" value={pw} autoComplete="current-password"
+              onChange={e=>setPw(e.target.value)} onKeyDown={e=>e.key==="Enter"&&submit()} /></Field>
+            {err && <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{err}</p>}
+            <button className="btn-primary w-full" onClick={submit} disabled={busy || !email || !pw}>
+              {busy ? "Signing in…" : "Sign in"}
+            </button>
+          </div>
         </div>
+        <p className="mt-4 text-center text-[11px] text-muted/70">Corivance · internal use only</p>
       </div>
     </div>
   );
@@ -1314,15 +1319,67 @@ function exportCSV(freelancers){
 }
 
 /* ============================ App shell ============================ */
+/* ============================ Sidebar ============================ */
+const Ico = ({ children, className }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{children}</svg>
+);
+const IconGrid     = (p)=><Ico {...p}><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></Ico>;
+const IconPipeline = (p)=><Ico {...p}><rect x="3" y="4" width="5" height="16" rx="1.4"/><rect x="10" y="4" width="5" height="10" rx="1.4"/><rect x="17" y="4" width="4" height="13" rx="1.4"/></Ico>;
+const IconUsers    = (p)=><Ico {...p}><circle cx="9" cy="8" r="3.1"/><path d="M3.6 20a5.4 5.4 0 0 1 10.8 0"/><path d="M16.2 5.6a3 3 0 0 1 0 5.8"/><path d="M17.8 20a5.2 5.2 0 0 0-2.1-4.2"/></Ico>;
+const IconFolder   = (p)=><Ico {...p}><path d="M3 7a2 2 0 0 1 2-2h3.2a2 2 0 0 1 1.5.7L11 7h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></Ico>;
+const IconSettings = (p)=><Ico {...p}><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="9" cy="6" r="2" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2" fill="currentColor" stroke="none"/><circle cx="8" cy="18" r="2" fill="currentColor" stroke="none"/></Ico>;
+
+const NAV = [
+  ["dashboard","Dashboard",IconGrid],
+  ["pipeline","Pipeline",IconPipeline],
+  ["freelancers","Freelancers",IconUsers],
+  ["projects","Projects",IconFolder],
+  ["settings","Settings",IconSettings],
+];
+function Sidebar({ tab, setTab, open, setOpen }){
+  return (
+    <>
+      <div onClick={()=>setOpen(false)}
+        className={cx("fixed inset-0 z-30 bg-ink/40 transition-opacity lg:hidden", open?"opacity-100":"pointer-events-none opacity-0")} aria-hidden="true" />
+      <aside className={cx(
+        "fixed z-40 flex h-[100dvh] w-64 shrink-0 flex-col border-r border-line bg-white p-4 transition-transform duration-200 lg:static lg:translate-x-0",
+        open?"translate-x-0":"-translate-x-full")}>
+        <div className="mb-8 flex items-center justify-between px-1 pt-1">
+          <div className="flex items-center gap-2">
+            <BrandMark size={26} />
+            <span className="text-base font-bold tracking-tight text-ink">Talent</span>
+          </div>
+          <button className="rounded-lg p-1 text-muted hover:bg-paper lg:hidden" onClick={()=>setOpen(false)} aria-label="Close menu">✕</button>
+        </div>
+        <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-wider text-muted/70">Workspace</p>
+        <nav className="space-y-1">
+          {NAV.map(([k,label,Icon])=>{
+            const active = tab===k;
+            return (
+              <button key={k} onClick={()=>{ setTab(k); setOpen(false); }}
+                className={cx("navlink", active ? "bg-brand-soft text-brand" : "text-muted hover:bg-paper hover:text-ink")}>
+                <Icon className={cx("h-[18px] w-[18px] shrink-0", active?"text-brand":"text-muted")} />
+                <span>{label}</span>
+              </button>
+            );
+          })}
+        </nav>
+        <div className="mt-auto px-3 pt-4 text-[11px] text-muted/70">Corivance · Talent</div>
+      </aside>
+    </>
+  );
+}
+
+/* ============================ App shell ============================ */
 function Shell({ session, db }){
-  const [tab,setTab] = useState("pipeline");
+  const [tab,setTab] = useState("dashboard");
   const [openF,setOpenF] = useState(null);
   const [newF,setNewF] = useState(false);
   const [importing,setImporting] = useState(false);
   const [menu,setMenu] = useState(false);
   const [stagePreset,setStagePreset] = useState("");
-
-  const tabs = [["dashboard","Dashboard"],["pipeline","Pipeline"],["freelancers","Freelancers"],["projects","Projects"],["settings","Settings"]];
+  const [sidebarOpen,setSidebarOpen] = useState(false);
 
   const openStage = (s)=>{ setStagePreset(s); setTab("pipeline"); };
 
@@ -1331,50 +1388,45 @@ function Shell({ session, db }){
   }
 
   return (
-    <div className="flex min-h-full flex-col">
-      <header className="sticky top-0 z-30 border-b border-line bg-white/90 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
-          <BrandLogo />
-          <nav className="ml-2 hidden items-center gap-1 sm:flex">
-            {tabs.map(([k,l])=>(
-              <button key={k} onClick={()=>setTab(k)} className={cx("seg", tab===k?"bg-brand-soft text-brand":"text-muted hover:text-ink")}>{l}</button>
-            ))}
-          </nav>
-          <div className="ml-auto flex items-center gap-2">
-            <button className="btn-ghost hidden sm:inline-flex" onClick={()=>setImporting(true)}>Import CSV</button>
-            <button className="btn-ghost hidden sm:inline-flex" onClick={()=>exportCSV(db.freelancers)}>Export</button>
-            <button className="btn-primary" onClick={()=>setNewF(true)}>Add Prospect</button>
-            <div className="relative">
-              <button className="rounded-full border border-line bg-paper px-2.5 py-2 text-xs font-semibold text-ink" onClick={()=>setMenu(m=>!m)} title={session.user.email}>
-                {(session.user.email||"?")[0].toUpperCase()}
-              </button>
-              {menu && (
-                <div className="absolute right-0 mt-2 w-44 rounded-lg border border-line bg-white py-1 shadow-lg" onMouseLeave={()=>setMenu(false)}>
-                  <div className="truncate px-3 py-1.5 text-xs text-muted">{session.user.email}</div>
-                  <button className="block w-full px-3 py-1.5 text-left text-sm hover:bg-paper sm:hidden" onClick={()=>{setImporting(true);setMenu(false);}}>Import CSV</button>
-                  <button className="block w-full px-3 py-1.5 text-left text-sm hover:bg-paper sm:hidden" onClick={()=>{exportCSV(db.freelancers);setMenu(false);}}>Export CSV</button>
-                  <button className="block w-full px-3 py-1.5 text-left text-sm text-red-600 hover:bg-paper" onClick={()=>sb.auth.signOut()}>Sign out</button>
-                </div>
-              )}
+    <div className="flex h-[100dvh] overflow-hidden">
+      <Sidebar tab={tab} setTab={setTab} open={sidebarOpen} setOpen={setSidebarOpen} />
+
+      <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
+        <header className="sticky top-0 z-20 border-b border-line bg-paper/85 backdrop-blur">
+          <div className="flex h-16 items-center gap-3 px-4 sm:px-6 lg:px-8">
+            <button className="rounded-lg border border-line bg-white p-2 text-ink lg:hidden" onClick={()=>setSidebarOpen(true)} aria-label="Open menu">
+              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <div className="ml-auto flex items-center gap-2">
+              <button className="btn-ghost hidden sm:inline-flex" onClick={()=>setImporting(true)}>Import CSV</button>
+              <button className="btn-ghost hidden sm:inline-flex" onClick={()=>exportCSV(db.freelancers)}>Export</button>
+              <button className="btn-primary" onClick={()=>setNewF(true)}>Add Prospect</button>
+              <div className="relative">
+                <button className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-xs font-semibold text-white" onClick={()=>setMenu(m=>!m)} title={session.user.email}>
+                  {(session.user.email||"?")[0].toUpperCase()}
+                </button>
+                {menu && (
+                  <div className="absolute right-0 mt-2 w-48 rounded-lg border border-line bg-white py-1 shadow-lg" onMouseLeave={()=>setMenu(false)}>
+                    <div className="truncate px-3 py-1.5 text-xs text-muted">{session.user.email}</div>
+                    <button className="block w-full px-3 py-1.5 text-left text-sm hover:bg-paper sm:hidden" onClick={()=>{setImporting(true);setMenu(false);}}>Import CSV</button>
+                    <button className="block w-full px-3 py-1.5 text-left text-sm hover:bg-paper sm:hidden" onClick={()=>{exportCSV(db.freelancers);setMenu(false);}}>Export CSV</button>
+                    <button className="block w-full px-3 py-1.5 text-left text-sm text-red-600 hover:bg-paper" onClick={()=>sb.auth.signOut()}>Sign out</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-        <nav className="flex gap-1 overflow-x-auto px-4 pb-2 sm:hidden">
-          {tabs.map(([k,l])=>(
-            <button key={k} onClick={()=>setTab(k)} className={cx("seg shrink-0", tab===k?"bg-brand-soft text-brand":"text-muted")}>{l}</button>
-          ))}
-        </nav>
-      </header>
+        </header>
 
-      {db.error && <div className="mx-auto max-w-7xl px-4 pt-3"><div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{db.error}</div></div>}
-
-      <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-5">
-        {tab==="dashboard" && <Dashboard db={db} go={setTab} onStageClick={openStage} />}
-        {tab==="pipeline" && <Pipeline db={db} onOpen={setOpenF} presetStage={stagePreset} clearPreset={()=>setStagePreset("")} />}
-        {tab==="freelancers" && <Freelancers db={db} />}
-        {tab==="projects" && <Projects db={db} />}
-        {tab==="settings" && <Settings db={db} />}
-      </main>
+        <main className="mx-auto w-full max-w-7xl grow px-4 py-8 sm:px-6 lg:px-8">
+          {db.error && <div className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{db.error}</div>}
+          {tab==="dashboard" && <Dashboard db={db} go={setTab} onStageClick={openStage} />}
+          {tab==="pipeline" && <Pipeline db={db} onOpen={setOpenF} presetStage={stagePreset} clearPreset={()=>setStagePreset("")} />}
+          {tab==="freelancers" && <Freelancers db={db} />}
+          {tab==="projects" && <Projects db={db} />}
+          {tab==="settings" && <Settings db={db} />}
+        </main>
+      </div>
 
       {openF && <FreelancerDetail f={openF} db={db} onClose={()=>setOpenF(null)} />}
       {newF && <FreelancerDetail f={{}} db={db} onClose={()=>setNewF(false)} />}
