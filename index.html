@@ -10,8 +10,8 @@
 <!--  Both values are safe in client-side code; RLS + Auth protect data.   -->
 <!-- ===================================================================== -->
 <script>
-  window.SUPABASE_URL      = "https://vkybmqlinhvvgxeveoye.supabase.co";       // e.g. https://abcd1234.supabase.co
-  window.SUPABASE_ANON_KEY = "sb_publishable_5AJ1LlnSl3eeXoddmIDK-w_Z8P-y9jg";  // the long "anon / publishable" key
+  window.SUPABASE_URL      = "https://vkybmqlinhvvgxeveoye.supabase.co";
+  window.SUPABASE_ANON_KEY = "sb_publishable_5AJ1LlnSl3eeXoddmIDK-w_Z8P-y9jg";
 </script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -175,14 +175,14 @@ function BrandLogo(){
   return (
     <div className="flex items-center gap-2">
       <BrandMark size={26} />
-      <span className="text-base font-bold tracking-tight text-ink">Corivance</span>
+      <span className="text-base font-bold tracking-tight text-ink">Talent</span>
     </div>
   );
 }
 function PageHeader({ title, actions }){
   return (
     <div className="mb-4 flex items-center justify-between gap-3">
-      <h1 className="flex items-center gap-2 text-lg font-bold text-ink"><BrandMark size={22} />{title}</h1>
+      <h1 className="text-lg font-bold text-ink">{title}</h1>
       {actions && <div className="flex items-center gap-2">{actions}</div>}
     </div>
   );
@@ -1343,7 +1343,7 @@ function Shell({ session, db }){
           <div className="ml-auto flex items-center gap-2">
             <button className="btn-ghost hidden sm:inline-flex" onClick={()=>setImporting(true)}>Import CSV</button>
             <button className="btn-ghost hidden sm:inline-flex" onClick={()=>exportCSV(db.freelancers)}>Export</button>
-            <button className="btn-primary" onClick={()=>setNewF(true)}>+ Prospect</button>
+            <button className="btn-primary" onClick={()=>setNewF(true)}>Add Prospect</button>
             <div className="relative">
               <button className="rounded-full border border-line bg-paper px-2.5 py-2 text-xs font-semibold text-ink" onClick={()=>setMenu(m=>!m)} title={session.user.email}>
                 {(session.user.email||"?")[0].toUpperCase()}
